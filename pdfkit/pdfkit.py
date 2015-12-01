@@ -95,7 +95,7 @@ class PDFKit(object):
         args = self.command(path)
 
         print "args is ", args
-        print "setting bufsize and uni newline and stderr is None"
+        print "setting bufsize and uni newline and stdin is None"
         result = subprocess.Popen(args, stdin=None, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE, bufsize=600000, universal_newlines=True)
 
