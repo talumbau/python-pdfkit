@@ -7,6 +7,7 @@ from .configuration import Configuration
 from itertools import chain
 import io
 import codecs
+import time
 
 
 class PDFKit(object):
@@ -95,14 +96,14 @@ class PDFKit(object):
 
         print "args is ", args
         print "setting bufsize and uni newline and stderr is None"
-        result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                  stderr=None, bufsize=600000, universal_newlines=True)
+        result = subprocess.Popen(args, stdin=None, stdout=subprocess.PIPE,
+                                  stderr=subprocess.PIPE, bufsize=600000, universal_newlines=True)
 
         # If the source is a string then we will pipe it into wkhtmltopdf.
         # If we want to add custom CSS to file then we read input file to
         # string and prepend css to it and then pass it to stdin.
         # This is a workaround for a bug in wkhtmltopdf (look closely in README)
-        if self.source.isString() or (self.source.isFile() and self.css):
+        """if self.source.isString() or (self.source.isFile() and self.css):
             print "here 1"
             input = self.source.to_s().encode('utf-8')
         elif self.source.isFileObj():
@@ -111,8 +112,24 @@ class PDFKit(object):
         else:
             print "input is none"
             input = None
-        print "input is ", input
-        stdout, stderr = result.communicate(input=input)
+        print "input is ", input"""
+        stdout, stderr = result.communicate(input=None)
+
+        """done = False
+        attempts = 0
+        MAX_ATTEMPTS = 5
+        while not done and attempts < MAX_ATTEMPTS:
+            ret = result.poll()
+            attempts += 1
+            if ret == 0:
+                done = True
+                print "I'm done"
+                continue
+            else:
+                print "sleeping 4 trying again"
+                time.sleep(4)"""
+
+        print "stderr is ", stderr
 
         if not stderr:
             stderr = ''
