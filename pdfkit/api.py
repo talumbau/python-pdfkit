@@ -18,9 +18,11 @@ def from_url(url, output_path, options=None, toc=None, cover=None, configuration
     Returns: True on success
     """
 
+    print "making PDFKit object"
     r = PDFKit(url, 'url', options=options, toc=toc, cover=cover,
                configuration=configuration)
 
+    print "calling to_pdf"
     return r.to_pdf(output_path)
 
 

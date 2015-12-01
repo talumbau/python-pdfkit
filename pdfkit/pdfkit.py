@@ -34,6 +34,7 @@ class PDFKit(object):
     def __init__(self, url_or_file, type_, options=None, toc=None, cover=None,
                  css=None, configuration=None):
 
+        print "starting init of object"
         self.source = Source(url_or_file, type_)
         self.configuration = (Configuration() if configuration is None
                               else configuration)
@@ -50,6 +51,7 @@ class PDFKit(object):
         self.cover = cover
         self.css = css
         self.stylesheets = []
+        print "ending init of object"
 
     def command(self, path=None):
         if self.css:
@@ -87,8 +89,11 @@ class PDFKit(object):
         return args
 
     def to_pdf(self, path=None):
+        print "starting to_pdf"
+        print "path is ", path
         args = self.command(path)
 
+        print "args is ", args
         result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                                   stderr=subprocess.PIPE)
 
@@ -97,14 +102,19 @@ class PDFKit(object):
         # string and prepend css to it and then pass it to stdin.
         # This is a workaround for a bug in wkhtmltopdf (look closely in README)
         if self.source.isString() or (self.source.isFile() and self.css):
+            print "here 1"
             input = self.source.to_s().encode('utf-8')
         elif self.source.isFileObj():
+            print "here 2"
             input = self.source.source.read().encode('utf-8')
         else:
+            print "input is none"
             input = None
+        print "input is ", input
         stdout, stderr = result.communicate(input=input)
 
         exit_code = result.returncode
+        print "the exit coe was ", exit_code
 
         if 'cannot connect to X server' in stderr.decode('utf-8'):
             raise IOError('%s\n'
@@ -124,11 +134,13 @@ class PDFKit(object):
             sys.stdout.write(stderr.decode('utf-8'))
 
         if not path:
+            print "here 42"
             return stdout
         else:
             try:
                 with codecs.open(path, encoding='utf-8') as f:
                     # read 4 bytes to get PDF signature '%PDF'
+                    print "here 43"
                     text = f.read(4)
                     if text == '':
                         raise IOError('Command failed: %s\n'
