@@ -94,9 +94,9 @@ class PDFKit(object):
         args = self.command(path)
 
         print "args is ", args
-        print "setting bufsize and uni newline"
+        print "setting bufsize and uni newline and stderr is None"
         result = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
-                                  stderr=subprocess.PIPE, bufsize=600000, universal_newlines=True)
+                                  stderr=None, bufsize=600000, universal_newlines=True)
 
         # If the source is a string then we will pipe it into wkhtmltopdf.
         # If we want to add custom CSS to file then we read input file to
@@ -113,6 +113,9 @@ class PDFKit(object):
             input = None
         print "input is ", input
         stdout, stderr = result.communicate(input=input)
+
+        if not stderr:
+            stderr = ''
 
         exit_code = result.returncode
         print "the exit coe was ", exit_code
